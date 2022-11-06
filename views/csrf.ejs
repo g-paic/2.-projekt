@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSRF</title>
+    </head>
+
+    <body>
+        <% if(username != undefined) { %>
+            <form action="/csrf/izbrisi/<%= username %>" method="POST" id="csrf-form">
+                <input type="hidden" name="csrf_token" value="220767bd72cb7b69823772573e852127"/>
+            </form>
+        <% } %>
+
+        <a href="/">Natrag</a><br>
+    </body>
+
+    <script>
+        document.getElementById("csrf-form").submit();
+    </script>
+</html>

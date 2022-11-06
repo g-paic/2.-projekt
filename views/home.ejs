@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title>
+    </head>
+
+    <body>
+        <% if(username != undefined) { %>
+            <h1><%= username %></h1>
+
+            <form action="/" method="POST">
+                <fieldset>
+                    <legend>Sigurnost</legend>
+                    <input type="radio" name="sigurnost" value="da">
+                    <label for="da">Da</label><br>
+                    <input type="radio" name="sigurnost" value="ne">
+                    <label for="ne">Ne</label><br>
+    
+                    <input type="submit" value="Postavi">
+                </fieldset>
+            </form>
+            <br/>
+
+            <a href='/provjeri/<%= sigurnost %>?q=<script>alert("XSS napad");</script>'>XSS</a><br/><br/>
+
+            <a href='/csrf/<%= username %>'>CSRF</a><br/><br/>
+
+            <form action="/izbrisi/<%= username %>" method="POST">
+                <input type="hidden" name="csrf_token" value="220767bd72cb7b69823772573e852127"/>
+                <input type="submit" value="Izbriši">
+            </form>
+
+            <br/>
+
+            <form action="/odjava/<%= username %>" method="POST">
+                <input type="submit" value="Odjava">
+            </form>
+        <% } %>
+
+        <% if(username == undefined) { %>
+            <a href="/prijava">Prijava</a><br><br>
+            <a href="/registracija">Registracija</a><br><br/>
+        <% } %>
+    </body>
+</html>

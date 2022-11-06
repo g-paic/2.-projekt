@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Prijava</title>
+    </head>
+
+    <body>
+        <h1>Prijava</h1>
+
+        <form action="/prijava" method="POST">
+            <label for="ime">Korisničko ime:</label>
+            <input type="text" name="ime" required><br>
+            <label for="lozinka">Lozinka:</label>
+            <input type="password" name="lozinka" required><br>
+            <input type="submit" value="Submit">
+        </form>
+        <br>
+
+        <a href="/registracija">Registracija</a><br><br>
+        <a href="/">Natrag</a><br>
+
+        <p><%= error %></p>
+    </body>
+</html>
