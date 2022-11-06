@@ -7,7 +7,6 @@ const db = require('../database');
 const CryptoJS = require('crypto-js');
 
 router.get('/', function(req, res) {
-    //console.log("haha");
     res.render('registracija', {
         error: undefined
     });

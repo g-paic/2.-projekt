@@ -6,6 +6,10 @@
 
     <body>
         <% if(username != undefined) { %>
+            <% if(sigurnost == "ne") { %>
+                <script>alert("Izbrisali ste račun");</script>
+            <% } %>
+
             <form action="/csrf/izbrisi/<%= username %>" method="POST" id="csrf-form">
                 <input type="hidden" name="csrf_token" value="220767bd72cb7b69823772573e852127"/>
             </form>

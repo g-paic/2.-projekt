@@ -18,9 +18,8 @@ router.post('/', async function(req, res) {
     const sql = "SELECT * FROM korisnici WHERE ime = '" + ime + "';";
 
     try {
-        let k = (await db.pool.query(sql, [])).rows;
-
         let korisnik = (await db.pool.query(sql, [])).rows[0];
+        
         if(korisnik != undefined) {
             if(ime == korisnik.ime) {
                 let loz = CryptoJS.enc.Base64.parse(korisnik.lozinka).toString(CryptoJS.enc.Utf8);

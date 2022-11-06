@@ -7,7 +7,6 @@ const dotenv = require("dotenv");
 dotenv.config();
 db.make();
 
-//middleware - predlošci (ejs)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -15,10 +14,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-//middleware - statički resursi
 app.use(express.static(path.join(__dirname, 'public')));
-
-//middleware - dekodiranje parametara
 app.use(express.urlencoded({ extended: true }));
 
 const homeRouter = require('./routes/home');
@@ -46,5 +42,3 @@ if(externalUrl) {
     console.log(`Server running at http://${host}:${port}/`);
   });
 }
-
-//app.listen(port);
