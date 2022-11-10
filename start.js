@@ -3,11 +3,11 @@ const child_process = require('child_process');
 const commands = [
     {
         name: 'App-1',
-        command: 'start node web.js'
+        command: 'cd ./ && start node web.js'
     },
     {
         name: 'App-2',
-        command: 'start node evilWeb.js'
+        command: 'cd ./ && start node evilWeb.js'
     }
 ];
 
