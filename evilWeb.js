@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const dotenv = require("dotenv");
+const db = require('./database');
+const session = require('express-session')
+const pgSession = require('connect-pg-simple')(session)
 
 dotenv.config();
 
@@ -15,16 +18,24 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
+app.use(session({
+  secret: 'FER',
+  resave: false,
+  store: new pgSession({
+      pool: db.pool
+  }),
+  saveUninitialized: true
+}));
+
 const csrfRouter = require('./routes/csrf');
 app.use('/', csrfRouter);
 
 const host = 'localhost';
 
 const externalUrl = process.env.RENDER_EXTERNAL_URL;
-//const port = externalUrl && process.env.PORT ? 10005 : 3000;
-const port = 3000;
+const port = externalUrl && process.env.PORT ? 10005 : 3000;
 
-/*if(externalUrl) {
+if(externalUrl) {
   const hostname = '127.0.0.1';
   app.listen(port, hostname, () => {
     console.log(`Server locally running at http://${hostname}:${port}/ and from outside on ${externalUrl}`);
@@ -33,8 +44,4 @@ const port = 3000;
   app.listen(port, host, () => {
     console.log(`Server running at http://${host}:${port}/`);
   });
-}*/
-
-app.listen(port, host, () => {
-  console.log(`Server running at http://${host}:${port}/`);
-});
+}

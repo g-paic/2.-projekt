@@ -8,16 +8,8 @@ router.get('/', async function(req, res, next) {
         let s_csrf = (await db.pool.query(sql, [])).rows[0];
         let zastita_od_csrf = s_csrf.vrijednost;
 
-        const sql2 = "SELECT * FROM korisnici WHERE prijavljen = 'da'";
-        let korisnik = (await db.pool.query(sql2, [])).rows[0];
-
-        let ime = undefined;
-        if(korisnik != undefined) {
-            ime = korisnik.ime
-        }
-
         res.render('csrf', {
-            username: ime,
+            username: req.session.user,
             zastita_od_csrf: zastita_od_csrf
         });
     } catch(err) {
@@ -39,14 +31,32 @@ router.post('/izbrisi', async function(req, res) {
             if(user_token.vrijednost != value) {
                 res.redirect("/home");
             } else {
-                const sql2 = "DELETE FROM korisnici WHERE prijavljen = 'da'";
+                const sql2 = "DELETE FROM korisnici WHERE ime = '" + req.session.user + "';";
                 await db.pool.query(sql2, []);
-                res.redirect('/home');
+
+                req.session.user = undefined;
+                req.session.destroy((err) => {
+                    if(err) {
+                        console.log(err);
+                        res.sendStatus(500);
+                    } else {
+                        res.redirect('/home');
+                    }
+                });
             }
         } else {
-            const sql2 = "DELETE FROM korisnici WHERE prijavljen = 'da'";
+            const sql2 = "DELETE FROM korisnici WHERE ime = '" + req.session.user + "';";
             await db.pool.query(sql2, []);
-            res.redirect('/home');
+
+            req.session.user = undefined;
+            req.session.destroy((err) => {
+                if(err) {
+                    console.log(err);
+                    res.sendStatus(500);
+                } else {
+                    res.redirect('/home');
+                }
+            });
         }
     } catch(err) {
         console.log(err);
