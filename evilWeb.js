@@ -1,10 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const db = require('./database');
 const dotenv = require("dotenv");
-const session = require('express-session')
-const pgSession = require('connect-pg-simple')(session)
 
 dotenv.config();
 
@@ -18,20 +15,9 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
-app.use(session({
-  secret: 'FER',
-  resave: false,
-  store: new pgSession({
-      pool: db.pool
-  }),
-  saveUninitialized: true
-}));
-//
 const csrfRouter = require('./routes/csrf');
-
 app.use('/', csrfRouter);
 
-//
 const host = 'localhost';
 
 const externalUrl = process.env.RENDER_EXTERNAL_URL;

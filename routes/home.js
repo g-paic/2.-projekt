@@ -28,8 +28,16 @@ router.get('/', async function(req, res, next) {
             n = "OMOGUĆENO";
         }
 
+        const sql3 = "SELECT * FROM korisnici WHERE prijavljen = 'da'";
+        let korisnik = (await db.pool.query(sql3, [])).rows[0];
+
+        let ime = undefined;
+        if(korisnik != undefined) {
+            ime = korisnik.ime
+        }
+
         res.render('home', {
-            user: req.session.user,
+            user: ime,
             zastita_od_xss: zastita_od_xss,
             zastita_od_csrf: zastita_od_csrf,
             m: m,
@@ -42,15 +50,9 @@ router.get('/', async function(req, res, next) {
 
 router.post('/odjava', async function(req, res) {
     try {
-        req.session.user = undefined;
-        req.session.destroy((err) => {
-            if(err) {
-                console.log(err);
-                res.sendStatus(500);
-            } else {
-                res.redirect('/');
-            }
-        });
+        const sql = "UPDATE korisnici SET prijavljen = 'ne' WHERE prijavljen = 'da';";
+        await db.pool.query(sql, []);
+        res.redirect("/");
     } catch(err) {
         console.log(err);
     }
@@ -58,18 +60,9 @@ router.post('/odjava', async function(req, res) {
 
 router.post('/izbrisi', async function(req, res) {
     try {
-        const sql = "DELETE FROM korisnici WHERE ime = '" + req.session.user + "';";
+        const sql = "DELETE FROM korisnici WHERE prijavljen = 'da';";
         await db.pool.query(sql, []);
-
-        req.session.user = undefined;
-        req.session.destroy((err) => {
-            if(err) {
-                console.log(err);
-                res.sendStatus(500);
-            } else {
-                res.redirect('/');
-            }
-        });
+        res.redirect("/");
     } catch(err) {
         console.log(err);
     }

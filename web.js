@@ -3,8 +3,6 @@ const app = express();
 const path = require('path');
 const db = require('./database');
 const dotenv = require("dotenv");
-const session = require('express-session')
-const pgSession = require('connect-pg-simple')(session)
 
 dotenv.config();
 db.make();
@@ -18,15 +16,6 @@ app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
-
-app.use(session({
-  secret: 'FER',
-  resave: false,
-  store: new pgSession({
-      pool: db.pool
-  }),
-  saveUninitialized: true
-}));
 
 const homeRouter = require('./routes/home');
 const prijavaRouter = require('./routes/prijava');

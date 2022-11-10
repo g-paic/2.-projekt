@@ -21,7 +21,8 @@ router.post('/', async function(req, res) {
             if(ime == korisnik.ime) {
                 let loz = CryptoJS.enc.Base64.parse(korisnik.lozinka).toString(CryptoJS.enc.Utf8);
                 if(loz == lozinka) {
-                    req.session.user = ime;
+                    const sql2 = "UPDATE korisnici SET prijavljen = 'da' WHERE ime = '" + ime + "';";
+                    await db.pool.query(sql2, []);
                     res.redirect("/");
                 } else {
                     res.render('prijava', {

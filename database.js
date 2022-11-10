@@ -15,7 +15,8 @@ const sql_drop = 'DROP TABLE IF EXISTS korisnici';
 
 const sql_create = `CREATE TABLE korisnici(
     ime text NOT NULL UNIQUE,
-    lozinka text NOT NULL
+    lozinka text NOT NULL,
+    prijavljen text NOT NULL
 )`;
 
 const sql_drop_token = 'DROP TABLE IF EXISTS token';
@@ -50,22 +51,10 @@ const sql_insert_safety_csrf = `INSERT INTO zastita_od_csrf(vrijednost) VALUES
     ('ne')
 `;
 
-const sql_drop_sessions = 'DROP TABLE IF EXISTS session';
-
-const sql_create_sessions = `CREATE TABLE session(
-    sid varchar NOT NULL COLLATE "default",
-    sess json NOT NULL,
-    expire timestamp(6) NOT NULL
-)`
-
-const sql_create_session_index1 = `ALTER TABLE session ADD CONSTRAINT session_pkey PRIMARY KEY (sid) NOT DEFERRABLE INITIALLY IMMEDIATE`
-const sql_create_session_index2 = `CREATE INDEX IDX_session_expire ON session(expire)`
-
 const sql1 = "SELECT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'korisnici') AS exist;"
 const sql2 = "SELECT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'token') AS exist;"
 const sql3 = "SELECT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'zastita_od_xss') AS exist;"
 const sql4 = "SELECT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'zastita_od_csrf') AS exist;"
-const sql5 = "SELECT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'session') AS exist;"
 
 pool.connect();
 
@@ -82,10 +71,7 @@ async function make() {
     let rez4 = await pool.query(sql4, []);
     let exist4 = rez4.rows[0].exist;
 
-    let rez5 = await pool.query(sql5, []);
-    let exist5 = rez5.rows[0].exist;
-
-    if(exist == false || exist2 == false || exist3 == false || exist4 == false || exist5 == false) {
+    if(exist == false || exist2 == false || exist3 == false || exist4 == false) {
         await pool.query(sql_drop, []);
         await pool.query(sql_create, []);
 
@@ -100,11 +86,6 @@ async function make() {
         await pool.query(sql_drop_safety_csrf, []);
         await pool.query(sql_create_safety_csrf, []);
         await pool.query(sql_insert_safety_csrf, []);
-
-        await pool.query(sql_drop_sessions, []);
-        await pool.query(sql_create_sessions, []);
-        await pool.query(sql_create_session_index1, []);
-        await pool.query(sql_create_session_index2, []);
     }
 }
 

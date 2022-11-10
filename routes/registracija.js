@@ -18,10 +18,8 @@ router.post('/', async function(req, res) {
         let korisnik = (await db.pool.query(sql, [])).rows[0];
         if(korisnik == undefined) {
             let loz = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(lozinka));
-            const sql2 = "INSERT INTO korisnici(ime, lozinka) VALUES('" + ime + "', '" + loz + "')";
+            const sql2 = "INSERT INTO korisnici(ime, lozinka, prijavljen) VALUES('" + ime + "', '" + loz + "', 'ne')";
             await db.pool.query(sql2, []);
-            
-            req.session.user = ime;
             res.redirect("/");
         } else {
             res.render('registracija', {
