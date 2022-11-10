@@ -3,11 +3,12 @@
     "build": "npm run clean && tsc && npm run copy-views && npm run copy-views",
     "clean": "if exist dist rmdir /s /q dist",
     "copy-views": "robocopy /mir /NFL /NDL /NJH /NJS /nc /ns /np src/views/ dist/views & exit 0",
-    "start": "node start.js"
+    "start": "concurrently \"node web.js\" \"node evilWeb.js\""
   },
   "dependencies": {
     "auth0": "^2.44.0",
     "body-parser": "^1.20.1",
+    "concurrently": "^7.5.0",
     "connect-pg-simple": "^7.0.0",
     "crypto-js": "^4.1.1",
     "dotenv": "^10.0.0",
