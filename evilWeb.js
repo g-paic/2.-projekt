@@ -7,7 +7,6 @@ const session = require('express-session')
 const pgSession = require('connect-pg-simple')(session)
 
 dotenv.config();
-db.make();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -27,21 +26,16 @@ app.use(session({
   }),
   saveUninitialized: true
 }));
-
-const homeRouter = require('./routes/home');
-const prijavaRouter = require('./routes/prijava');
-const registracijaRouter = require('./routes/registracija');
+//
 const csrfRouter = require('./routes/csrf');
 
-app.use('/', homeRouter);
-app.use('/prijava', prijavaRouter);
-app.use('/registracija', registracijaRouter);
-app.use('/csrf', csrfRouter);
+app.use('/', csrfRouter);
 
+//
 const host = 'localhost';
 
 const externalUrl = process.env.RENDER_EXTERNAL_URL;
-const port = externalUrl && process.env.PORT ? parseInt(process.env.PORT) : 4080;
+const port = externalUrl && process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 if(externalUrl) {
   const hostname = '127.0.0.1';

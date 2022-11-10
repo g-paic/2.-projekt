@@ -5,39 +5,54 @@
     </head>
 
     <body>
-        <% if(username != undefined) { %>
-            <h1><%= username %></h1>
+        <% if(user != undefined) { %>
+            <h1><%= user %></h1>
 
-            <form action="/" method="POST">
+            <form action="/zastita_od_xss" method="POST">
                 <fieldset>
-                    <legend>Sigurnost</legend>
-                    <input type="radio" name="sigurnost" value="da">
+                    <legend>Zaštita od xss</legend>
+                    <input type="radio" name="zastita_od_xss" value="da">
                     <label for="da">Da</label><br>
-                    <input type="radio" name="sigurnost" value="ne">
+                    <input type="radio" name="zastita_od_xss" value="ne">
                     <label for="ne">Ne</label><br>
     
                     <input type="submit" value="Postavi">
                 </fieldset>
             </form>
+
             <br/>
 
-            <a href='/provjeri/<%= sigurnost %>?q=<script>alert("XSS napad");</script>'>XSS</a><br/><br/>
+            <form action="/zastita_od_csrf" method="POST">
+                <fieldset>
+                    <legend>Zaštita od csrf</legend>
+                    <input type="radio" name="zastita_od_csrf" value="da">
+                    <label for="da">Da</label><br>
+                    <input type="radio" name="zastita_od_csrf" value="ne">
+                    <label for="ne">Ne</label><br>
+    
+                    <input type="submit" value="Postavi">
+                </fieldset>
+            </form>
 
-            <a href='/csrf/<%= username %>'>CSRF</a><br/><br/>
+            <br/>
 
-            <form action="/izbrisi/<%= username %>" method="POST">
+            <a href='/provjeri/<%= zastita_od_xss %>?q=<script>alert("XSS napad");</script>'>XSS (<%= m %>)</a><br/><br/>
+
+            <a href='http://localhost:3000'>CSRF (<%= n %>)</a><br/><br/>
+
+            <form action="/izbrisi" method="POST">
                 <input type="hidden" name="csrf_token" value="220767bd72cb7b69823772573e852127"/>
                 <input type="submit" value="Izbriši">
             </form>
 
             <br/>
 
-            <form action="/odjava/<%= username %>" method="POST">
+            <form action="/odjava" method="POST">
                 <input type="submit" value="Odjava">
             </form>
         <% } %>
 
-        <% if(username == undefined) { %>
+        <% if(user == undefined) { %>
             <a href="/prijava">Prijava</a><br><br>
             <a href="/registracija">Registracija</a><br><br/>
         <% } %>

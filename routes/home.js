@@ -4,59 +4,85 @@ const router = express.Router();
 const db = require('../database');
 
 router.get('/', async function(req, res, next) {
-    const sql = "SELECT * FROM korisnici WHERE prijavljen = 'da';";
     try {
-        let korisnik = (await db.pool.query(sql, [])).rows[0];
-        let ime;
-        if(korisnik == undefined) {
-            ime = undefined;
-        } else {
-            ime = korisnik.ime;
+        const sql1 = "SELECT * FROM zastita_od_xss";
+        let s_xss = (await db.pool.query(sql1, [])).rows[0];
+        let zastita_od_xss = s_xss.vrijednost;
+
+
+        let m = "";
+        if(zastita_od_xss == "da") {
+            m = "ONEMOGUĆENO";
+        } else if(zastita_od_xss == "ne") {
+            m = "OMOGUĆENO";
         }
 
-        const sql2 = "SELECT * FROM sigurnost";
-        let s = (await db.pool.query(sql2, [])).rows[0];
-        let sigurnost = s.vrijednost;
+        const sql2 = "SELECT * FROM zastita_od_csrf";
+        let s_csrf = (await db.pool.query(sql2, [])).rows[0];
+        let zastita_od_csrf = s_csrf.vrijednost;
+
+        let n = "";
+        if(zastita_od_csrf == "da") {
+            n = "ONEMOGUĆENO";
+        } else if(zastita_od_csrf == "ne") {
+            n = "OMOGUĆENO";
+        }
 
         res.render('home', {
-            username: ime,
-            sigurnost: sigurnost
+            user: req.session.user,
+            zastita_od_xss: zastita_od_xss,
+            zastita_od_csrf: zastita_od_csrf,
+            m: m,
+            n: n
         });
     } catch(err) {
         console.log(err);
     }
 });
 
-router.post('/odjava/:ime', async function(req, res) {
-    let ime = req.params.ime;
+router.post('/odjava', async function(req, res) {
     try {
-        const sql = "UPDATE korisnici SET prijavljen = 'ne' WHERE ime = '" + ime + "';";
-        await db.pool.query(sql, []);
-        res.redirect("/");
+        req.session.user = undefined;
+        req.session.destroy((err) => {
+            if(err) {
+                console.log(err);
+                res.sendStatus(500);
+            } else {
+                res.redirect('/');
+            }
+        });
     } catch(err) {
         console.log(err);
     }
 });
 
-router.post('/izbrisi/:ime', async function(req, res) {
-    let ime = req.params.ime;
+router.post('/izbrisi', async function(req, res) {
     try {
-        const sql = "DELETE FROM korisnici WHERE ime = '" + ime + "';";
+        const sql = "DELETE FROM korisnici WHERE ime = '" + req.session.user + "';";
         await db.pool.query(sql, []);
-        res.redirect("/");
+
+        req.session.user = undefined;
+        req.session.destroy((err) => {
+            if(err) {
+                console.log(err);
+                res.sendStatus(500);
+            } else {
+                res.redirect('/');
+            }
+        });
     } catch(err) {
         console.log(err);
     }
 });
 
-router.get('/provjeri/:sigurnost', async function(req, res, next) {
+router.get('/provjeri/:zastita_od_xss', async function(req, res, next) {
     try {
-        let sigurnost = req.params.sigurnost;
+        let zastita_od_xss = req.params.zastita_od_xss;
         let q = req.query.q;
 
-        if(sigurnost == "da") {
+        if(zastita_od_xss == "da") {
             res.setHeader("Content-Security-Policy", "script-src http://localhost:4080")
-        } else if(sigurnost == "ne") {
+        } else if(zastita_od_xss == "ne") {
             res.removeHeader("Content-Security-Policy");
         }
         
@@ -68,12 +94,24 @@ router.get('/provjeri/:sigurnost', async function(req, res, next) {
     }
 });
 
-router.post('/', async function(req, res) {
+router.post('/zastita_od_xss', async function(req, res) {
     try {
-        let sigurnost = req.body.sigurnost;
-
-        const sql = "UPDATE sigurnost SET vrijednost = '" + sigurnost + "';";
+        let zastita_od_xss = req.body.zastita_od_xss;
+        const sql = "UPDATE zastita_od_xss SET vrijednost = '" + zastita_od_xss + "';";
         await db.pool.query(sql, []);
+
+        res.redirect("/");
+    } catch(err) {
+        console.log(err);
+    }
+});
+
+router.post('/zastita_od_csrf', async function(req, res) {
+    try {
+        let zastita_od_csrf = req.body.zastita_od_csrf;
+        const sql = "UPDATE zastita_od_csrf SET vrijednost = '" + zastita_od_csrf + "';";
+        await db.pool.query(sql, []);
+        
         res.redirect("/");
     } catch(err) {
         console.log(err);
