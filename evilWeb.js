@@ -21,9 +21,10 @@ app.use('/', csrfRouter);
 const host = 'localhost';
 
 const externalUrl = process.env.RENDER_EXTERNAL_URL;
-const port = externalUrl && process.env.PORT ? 10005 : 3000;
+//const port = externalUrl && process.env.PORT ? 10005 : 3000;
+const port = 3000;
 
-if(externalUrl) {
+/*if(externalUrl) {
   const hostname = '127.0.0.1';
   app.listen(port, hostname, () => {
     console.log(`Server locally running at http://${hostname}:${port}/ and from outside on ${externalUrl}`);
@@ -32,4 +33,8 @@ if(externalUrl) {
   app.listen(port, host, () => {
     console.log(`Server running at http://${host}:${port}/`);
   });
-}
+}*/
+
+app.listen(port, host, () => {
+  console.log(`Server running at http://${host}:${port}/`);
+});
